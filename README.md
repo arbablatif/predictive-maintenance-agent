@@ -1,6 +1,6 @@
-# Predictive Maintenance Agent
+# Predictive Maintenance Agent: Bearing Fault Diagnosis, RUL Prediction and LLM Tickets
 
-Turns a machine signal into a maintenance ticket: what is wrong, how sure we are, what to do, and by when. Physics and machine learning produce the numbers. An LLM agent picks the tools and writes the explanation, and code checks that every number it writes came from a tool.
+A predictive maintenance system that turns a machine signal into a maintenance ticket: what is wrong, how sure we are, what to do, and by when. Physics and machine learning produce the numbers. An LLM agent picks the tools and writes the explanation, and code checks that every number it writes came from a tool.
 
 ![Envelope spectrum of a held-out outer race recording, with peaks at the BPFO harmonics](results/figures/example_envelope_outer_race.png)
 
@@ -230,3 +230,11 @@ MIT. See [LICENSE](LICENSE). The datasets are not included and keep their own te
 
 - [Case Western Reserve University Bearing Data Center](https://engineering.case.edu/bearingdatacenter).
 - A. Saxena, K. Goebel, D. Simon, N. Eklund, "Damage Propagation Modeling for Aircraft Engine Run-to-Failure Simulation", PHM 2008. NASA Prognostics Data Repository.
+
+## Related projects
+
+- [dsp-copilot](https://github.com/arbablatif/dsp-copilot): LLM agent for signal processing on CSV and WAV files
+- [contactless-vitals](https://github.com/arbablatif/contactless-vitals): camera-based pulse waveform extraction with rPPG
+- [analytics-agent](https://github.com/arbablatif/analytics-agent): text-to-SQL agent with guardrails and cited answers
+
+Project page: [https://arbablatif.github.io/projects/predictive-maintenance-agent/](https://arbablatif.github.io/projects/predictive-maintenance-agent/). More work at [arbablatif.github.io](https://arbablatif.github.io/).
