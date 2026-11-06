@@ -38,6 +38,11 @@ MAX_TOKENS = 2000
 RETRIES = 2  # transient errors only (rate limit, overload)
 
 
+def default_provider() -> str:
+    """The provider set in .env, or Gemini."""
+    return (os.getenv("LLM_PROVIDER") or "gemini").lower()
+
+
 class LLMError(RuntimeError):
     """The provider could not be reached or rejected the request."""
 
@@ -57,10 +62,13 @@ class LLMClient:
     def __init__(self, provider: str | None = None, model: str | None = None,
                  mock: bool = False, cache_dir: Path | None = None, max_calls: int | None = None):
         self.mock = mock
-        self.provider = "mock" if mock else (provider or os.getenv("LLM_PROVIDER") or "gemini").lower()
+        configured = default_provider()
+        self.provider = "mock" if mock else (provider or configured).lower()
         if not mock and self.provider not in DEFAULT_MODELS:
             raise ValueError(f"Unknown provider '{self.provider}'. Use gemini, anthropic or openai.")
-        self.model = "mock" if mock else (model or os.getenv("LLM_MODEL") or DEFAULT_MODELS[self.provider])
+        # LLM_MODEL names a model of the configured provider, so it must not follow a switch to another one.
+        env_model = os.getenv("LLM_MODEL") if self.provider == configured else None
+        self.model = "mock" if mock else (model or env_model or DEFAULT_MODELS[self.provider])
         self.cache_dir = cache_dir or ROOT / "cache" / "llm"
         self.api_calls = 0  # real (paid) calls made by this client
         self.max_calls = max_calls  # hard budget: exceeding it raises instead of spending
@@ -80,9 +88,10 @@ class LLMClient:
             raise BudgetExceeded(f"Stopped at the budget of {self.max_calls} paid calls.")
         reply = self._call_with_retry(system, messages, tools)
         self.api_calls += 1
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"provider": self.provider, "model": self.model, "text": reply.text,
-                                    "tool_calls": reply.tool_calls}, indent=2), encoding="utf-8")
+        if reply.text or reply.tool_calls:  # an empty or blocked reply must not replay forever
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"provider": self.provider, "model": self.model, "text": reply.text,
+                                        "tool_calls": reply.tool_calls}, indent=2), encoding="utf-8")
         return reply
 
     # ----------------------------------------------------------------- private

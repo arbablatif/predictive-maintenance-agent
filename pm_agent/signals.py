@@ -5,7 +5,8 @@ Two kinds of input are accepted, and they are kept apart on purpose:
     engine_history  a C-MAPSS style sensor table (26 columns), one row per cycle
 
 Sample rate and shaft speed come from the file or the person uploading it. They are never
-guessed, because a wrong value moves every fault frequency without any visible error.
+guessed, because a wrong value moves every fault frequency without any visible error. For the
+same reason, a rate that conflicts with a known CWRU recording is refused.
 """
 from __future__ import annotations
 
@@ -100,6 +101,9 @@ def load_upload(raw: bytes, filename: str, asset: str | None = None, fs: float |
     suffix = Path(filename).suffix.lower()
     if suffix == ".mat":
         samples, file_rpm, file_fs = _read_mat(raw, filename)
+        if fs and file_fs and fs != file_fs:
+            raise SignalError(f"{filename} is a known recording at {file_fs:g} Hz, but {fs:g} Hz was entered. "
+                              "Leave the sample rate empty to use the known rate.")
         fs, rpm = fs or file_fs, rpm or file_rpm
     elif suffix in (".csv", ".txt"):
         table = _read_table(raw, filename)

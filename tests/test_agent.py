@@ -4,13 +4,15 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+import scipy.io as sio
 
 from pm_agent import llm as llm_module
 from pm_agent.agent import TicketAgent
 from pm_agent.config import SAMPLE_DIR
-from pm_agent.llm import BudgetExceeded, LLMClient, LLMReply
+from pm_agent.llm import BudgetExceeded, LLMClient, LLMError, LLMReply
 from pm_agent.signals import SKF_6203, SignalError, load_upload
 from pm_agent.ticket import RUL_NOT_AVAILABLE
+from pm_agent import tools as tools_module
 from pm_agent.tools import execute
 
 
@@ -31,7 +33,10 @@ class Scripted:
 
     def chat(self, system, messages, tools):
         self.last_messages = messages
-        return self.replies.pop(0)
+        reply = self.replies.pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
 
 
 def call(name, signal):
@@ -79,6 +84,16 @@ def test_rul_tool_gives_an_ordered_interval(tmp_path):
     assert outcome.figures[0].exists()
 
 
+def test_a_crashing_tool_is_reported_without_local_detail(tmp_path, monkeypatch):
+    def crash(*args):
+        raise AttributeError("C:/secret/path")
+
+    monkeypatch.setitem(tools_module._IMPLEMENTATIONS, "diagnose_bearing", crash)
+    signal = vibration()
+    result = execute({signal.signal_id: signal}, "diagnose_bearing", {"signal_id": signal.signal_id}, tmp_path).result
+    assert result["code"] == "tool_failed" and "secret" not in result["error"]
+
+
 def test_unknown_tool_and_signal_are_reported_not_raised(tmp_path):
     signal = vibration()
     signals = {signal.signal_id: signal}
@@ -114,6 +129,27 @@ def test_upload_needs_rate_and_speed():
         load_upload(raw, "a.csv", rpm=1750)
     with pytest.raises(SignalError, match="Shaft speed"):
         load_upload(raw, "a.csv", fs=12_000)
+
+
+def cwru_style_mat(tmp_path, number):
+    path = tmp_path / f"{number}.mat"
+    sio.savemat(path, {f"X{number:03d}_DE_time": np.zeros((100, 1)), f"X{number:03d}RPM": np.array([[1730.0]])})
+    return path.read_bytes()
+
+
+def test_a_known_recording_uses_its_true_rate_when_none_is_entered(tmp_path):
+    assert load_upload(cwru_style_mat(tmp_path, 100), "100.mat").fs == 48_000
+
+
+def test_a_wrong_rate_for_a_known_recording_is_refused_not_used(tmp_path):
+    with pytest.raises(SignalError, match="48000 Hz"):
+        load_upload(cwru_style_mat(tmp_path, 100), "100.mat", fs=12_000)
+    assert load_upload(cwru_style_mat(tmp_path, 100), "100.mat", fs=48_000).fs == 48_000
+
+
+def test_an_unknown_mat_file_needs_a_rate(tmp_path):
+    with pytest.raises(SignalError, match="Sample rate"):
+        load_upload(cwru_style_mat(tmp_path, 5), "5.mat")
 
 
 def test_upload_rejects_bad_shapes_and_types():
@@ -214,6 +250,61 @@ def test_any_spelling_of_the_fault_name_is_accepted(tmp_path, wording):
     assert result.ticket.status == "VERIFIED" and result.retries == 0
 
 
+def test_a_bearing_life_equal_to_the_policy_window_is_rejected(tmp_path):
+    """7 is the real window here, so only the bearing rule can catch this."""
+    signal = vibration()
+    lie = ticket_reply("Outer race fault. Remaining useful life is 7 days.")
+    ticket = TicketAgent(Scripted([call("diagnose_bearing", signal), lie, lie]), tmp_path).run(signal).ticket
+    assert ticket.status == "UNVERIFIED"
+    assert any("Remaining life" in issue for issue in ticket.issues)
+
+
+def test_an_engine_ticket_may_state_remaining_life(no_keys, tmp_path):
+    assert TicketAgent(LLMClient(mock=True), tmp_path).run(engine()).ticket.status == "VERIFIED"
+
+
+def test_a_healthy_result_cannot_be_written_up_as_a_fault(no_keys, tmp_path):
+    signal = vibration("synthetic_healthy.csv")
+    lie = ticket_reply("Severe inner race fault found.", "Replace the bearing.")
+    result = TicketAgent(Scripted([call("diagnose_bearing", signal), lie, lie]), tmp_path).run(signal)
+    assert result.trace[0].result["predicted_class"] == "normal"
+    assert result.ticket.status == "UNVERIFIED"
+
+
+def test_an_empty_reply_is_retried_and_kept_out_of_the_history(tmp_path):
+    signal = vibration()
+    llm = Scripted([call("diagnose_bearing", signal), LLMReply(""), ticket_reply("Likely outer race fault.")])
+    result = TicketAgent(llm, tmp_path).run(signal)
+    assert result.ticket.status == "VERIFIED" and result.retries == 1
+    assert all(m.get("text") or m.get("tool_calls") for m in llm.last_messages if m["role"] == "assistant")
+
+
+def test_repeated_empty_replies_end_unverified(tmp_path):
+    signal = vibration()
+    ticket = TicketAgent(Scripted([call("diagnose_bearing", signal), LLMReply(""), LLMReply("")]), tmp_path).run(signal).ticket
+    assert ticket.status == "UNVERIFIED" and "empty" in ticket.issues[0]
+    assert ticket.confidence == "high"  # the finished tool work is still shown
+
+
+def test_a_provider_failure_after_the_tools_ran_keeps_the_tool_results(tmp_path):
+    signal = vibration()
+    llm = Scripted([call("diagnose_bearing", signal), LLMError("rejected")])
+    ticket = TicketAgent(llm, tmp_path).run(signal).ticket
+    assert ticket.status == "UNVERIFIED" and "rejected" in ticket.issues[0]
+    assert ticket.urgency == "high"
+
+
+def test_a_provider_failure_before_any_tool_is_raised(tmp_path):
+    with pytest.raises(LLMError):
+        TicketAgent(Scripted([LLMError("no key")]), tmp_path).run(vibration())
+
+
+def test_the_budget_limit_is_never_swallowed(tmp_path):
+    signal = vibration()
+    with pytest.raises(BudgetExceeded):
+        TicketAgent(Scripted([call("diagnose_bearing", signal), BudgetExceeded("stop")]), tmp_path).run(signal)
+
+
 def test_llm_text_cannot_overwrite_tool_set_fields(tmp_path):
     signal = vibration()
     reply = LLMReply(json.dumps({"finding": "Outer race fault.", "recommended_action": "Inspect.",
@@ -268,6 +359,32 @@ def test_budget_stops_paid_calls_but_not_cached_ones(stub_provider, tmp_path):
     with pytest.raises(BudgetExceeded):
         client.chat("s", [{"role": "user", "text": "two"}], [])
     assert len(stub_provider) == 1
+
+
+def test_an_empty_reply_is_not_cached(monkeypatch, tmp_path):
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    replies = [LLMReply("", []), LLMReply("answer", [])]
+    monkeypatch.setattr(llm_module, "_call_gemini", lambda *args: replies.pop(0))
+    client = LLMClient(provider="gemini", cache_dir=tmp_path)
+    message = [{"role": "user", "text": "hi"}]
+    assert client.chat("s", message, []).text == ""
+    assert list(tmp_path.iterdir()) == []
+    assert client.chat("s", message, []).text == "answer"  # the second try reached the provider
+
+
+def test_llm_model_applies_only_to_the_configured_provider(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("LLM_MODEL", "gemini-custom")
+    assert LLMClient().model == "gemini-custom"
+    assert LLMClient(provider="gemini").model == "gemini-custom"
+    assert LLMClient(provider="openai").model == llm_module.DEFAULT_MODELS["openai"]
+    assert LLMClient(provider="openai", model="chosen").model == "chosen"
+
+
+def test_requirements_pin_the_version_that_built_the_models():
+    from pm_agent.tools import bearing_model
+    requirements = (Path(__file__).resolve().parents[1] / "requirements.txt").read_text(encoding="utf-8")
+    assert f"scikit-learn=={bearing_model().sklearn_version}" in requirements
 
 
 def test_mock_mode_never_touches_a_provider(stub_provider, tmp_path):

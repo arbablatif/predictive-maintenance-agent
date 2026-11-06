@@ -2,7 +2,7 @@
 numpy>=2.0
 scipy>=1.13
 pandas>=2.2
-scikit-learn>=1.5
+scikit-learn==1.9.1  # must match the version that built models/*.joblib
 joblib>=1.4
 matplotlib>=3.8
 streamlit>=1.35

@@ -15,7 +15,7 @@ from pathlib import Path
 
 from pm_agent.agent import TicketAgent
 from pm_agent.config import OUT_DIR, SAMPLE_DIR
-from pm_agent.llm import LLMClient
+from pm_agent.llm import LLMClient, LLMError
 from pm_agent.signals import SignalError, load_upload
 
 
@@ -45,8 +45,11 @@ def main() -> None:
         raise SystemExit(f"Error: {exc}")
 
     llm = LLMClient(provider=args.provider, mock=args.mock)
-    result = TicketAgent(llm).run(signal, args.request,
-                                  on_tool=lambda t: print(f"[tool] {t.name}: {'ok' if t.ok else t.result['error']}"))
+    try:
+        result = TicketAgent(llm).run(signal, args.request,
+                                      on_tool=lambda t: print(f"[tool] {t.name}: {'ok' if t.ok else t.result['error']}"))
+    except LLMError as exc:
+        raise SystemExit(f"Error: {exc}")
     folder = OUT_DIR / signal.signal_id
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "ticket.md").write_text(result.ticket.to_markdown(), encoding="utf-8")

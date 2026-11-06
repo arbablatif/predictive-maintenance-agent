@@ -103,8 +103,8 @@
     }
   ],
   "fabrication": {
-    "caught": 40,
-    "injected": 40,
+    "caught": 80,
+    "injected": 80,
     "false_alarms_on_clean_tickets": 0
   },
   "tickets": [

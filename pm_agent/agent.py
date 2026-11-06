@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Callable
 
 from .config import OUT_DIR
-from .llm import LLMClient
+from .llm import BudgetExceeded, LLMClient, LLMError
 from .mock_llm import build_user_message
 from .signals import AssetSignal
 from .ticket import Ticket, build_ticket, parse_reply, review
@@ -77,8 +77,25 @@ class TicketAgent:
         fields, issues = None, ["The agent stopped before writing a ticket."]
 
         for _ in range(self.max_steps):
-            reply = self.llm.chat(SYSTEM_PROMPT, messages, TOOLS)
+            try:
+                reply = self.llm.chat(SYSTEM_PROMPT, messages, TOOLS)
+            except BudgetExceeded:
+                raise  # the caller set this limit and decides what to do next
+            except LLMError as exc:
+                if not trace:
+                    raise  # nothing has run yet, so there is no ticket worth showing
+                issues = [f"The model call failed, so the text could not be finished: {exc}"]
+                break
             turns += 1
+
+            if not reply.text and not reply.tool_calls:
+                # Providers reject an empty turn in the history, so it is left out and the request repeated.
+                issues = ["The model returned an empty reply."]
+                if retries >= MAX_RETRIES:
+                    break
+                retries += 1
+                continue
+
             messages.append({"role": "assistant", "text": reply.text, "tool_calls": reply.tool_calls})
 
             if reply.tool_calls:

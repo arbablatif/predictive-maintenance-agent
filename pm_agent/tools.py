@@ -119,4 +119,6 @@ def execute(signals: dict[str, AssetSignal], name: str, args: dict | None, out_d
         result, figures = _IMPLEMENTATIONS[name](signal, out_dir)
     except ValueError as exc:  # raised by the input checks, such as a signal that is too short
         return ToolOutcome(name, args, {"error": str(exc), "code": "invalid_signal"})
+    except Exception as exc:  # such as a model file that will not load. The detail may hold local paths
+        return ToolOutcome(name, args, {"error": f"{name} failed with {type(exc).__name__}.", "code": "tool_failed"})
     return ToolOutcome(name, args, result, figures)

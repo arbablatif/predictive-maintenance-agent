@@ -11,4 +11,4 @@ Mode: live. Model: gemini-3.1-flash-lite. Paid API calls this run: 0.
 | Trap: RUL asked of a bearing (real) | yes | outer_race | yes | VERIFIED | 0 | yes | high | high | RUL refused: yes |
 | Out of range, 900 rpm (synthetic) | yes | inner_race | n/a | VERIFIED | 0 | yes | low | low | Flagged: yes |
 
-Fabrication check: 40 of 40 injected claims caught, 0 false alarms on clean tickets.
+Fabrication check: 80 of 80 injected claims caught, 0 false alarms on clean tickets.

@@ -25,9 +25,16 @@ This project is built around those two risks.
 |---|---|
 | Asset, confidence, urgency, action window, RUL line, evidence, plots | Finding and recommended action, in plain words |
 
-Each number in the LLM's text, including percentages and spelled-out numbers, is then matched against the tool results. Deadlines are held to a stricter rule: they must equal the policy window, so "3 days" fails even if a 3 appears somewhere in a tool result. A failed draft gets one retry that names the offending numbers. After that, the ticket is stamped **UNVERIFIED**.
+Code then reviews the LLM's text in four ways:
 
-**RUL is deliberately not estimated for bearings.** CWRU has no run-to-failure history and C-MAPSS is a different machine, so a bearing RUL would be made up. Asked for one, the tool refuses and the ticket says it is not available.
+- **Numbers.** Each number, including percentages and spelled-out numbers, must match a tool result.
+- **Deadlines.** A deadline must equal the policy window, so "3 days" fails even if a 3 appears somewhere in a tool result. Common vague wording with no number to check, such as "a few days" or "by Friday", also fails.
+- **Bearing life.** A bearing ticket may only say that remaining life is not available. "Remaining useful life is 7 days" fails even when 7 is the real policy window.
+- **Contradictions.** The text can't report a fault on a normal result, deny the diagnosed fault or name a different one.
+
+A failed draft gets one retry that lists the problems. After that, the ticket is stamped **UNVERIFIED**. These are pattern checks, so they catch common phrasings rather than every possible one (see [Limitations](#limitations)).
+
+**RUL is deliberately not estimated for bearings.** CWRU has no run-to-failure history and C-MAPSS is a different machine, so a bearing RUL would be made up. Asked for one, the tool refuses, the ticket's RUL field says it is not available, and the review rejects a life figure written into the text.
 
 ### Dataset traps found and handled
 
@@ -155,12 +162,13 @@ The confidence label for RUL separates accuracy only weakly (capped RMSE 10.5 hi
 | Trap: RUL asked of a bearing | yes | outer race | yes | VERIFIED | high | high | RUL refused: yes |
 | Synthetic signal at 900 rpm | yes | inner race | n/a | VERIFIED | low | low | Flagged: yes |
 
-The check caught 40 of 40 invented claims added to clean tickets, with no false alarms on the tickets themselves.
+The review caught 80 of 80 invented claims added to clean tickets, with no false alarms on the tickets themselves.
 
 **How to read this honestly:**
 
-- **The live model invented no numbers in this run, so the check was barely exercised live.** Its findings are short and quote few numbers. The 40 of 40 result covers five fabrications I wrote myself, repeated across eight tickets, so it shows the check works on those patterns, not that it is unbeatable.
-- **The first live run took 20 paid calls and 4 retries, all caused by a bug in the checker.** The model wrote `outer_race`, and the check only accepted `outer race`. After the fix, the table above was replayed from cached replies with a budget of zero paid calls, so it shows 0 retries.
+- **The live model invented no numbers in this run, so the check was barely exercised live.** Its findings are short and quote few numbers. The 80 of 80 result covers ten fabrications I wrote myself, repeated across eight tickets, so it shows the check works on those patterns, not that it is unbeatable.
+- **An earlier version of this check scored 40 of 40 and still had real gaps.** A code review found that it passed "within thirteen months", "by Friday" and a bearing life equal to the policy window, and that a healthy result could be written up as a severe fault. All of these are now fixed and tested, and five of the ten fabrications come from that review. The score says little about phrasings nobody has tried yet.
+- **The first live run took 20 paid calls and 4 retries, all caused by a bug in the checker.** The model wrote `outer_race`, and the check only accepted `outer race`. After the fix, the table above was replayed from cached replies with a budget of zero paid calls, so it shows 0 retries. The same cached replies also pass the stricter review described above.
 - **Eight cases is a smoke test, not a benchmark** (`results/eval_live.md`, `results/eval_mock.md`).
 - **The text is correct but plain.** The evidence section of each ticket carries most of the detail. See the [example ticket](results/example_ticket.md).
 
@@ -210,7 +218,13 @@ The repo contains no raw data. Files in `samples/` are synthetic and generated b
 - **C-MAPSS is simulated,** with one operating condition and one failure mode. Real fleets have changing conditions, repairs and missing data. Beyond about 125 cycles, the model only says "healthy".
 - **Policy values are placeholders.** The urgency tiers and action windows in `pm_agent/policy.py` are demo values. A reliability engineer should set them from failure costs and spares lead times.
 - **The number check proves origin, not truth.** It shows a number came from a tool, not that the tool is right, and it does not judge the reasoning in the prose. A number used in the wrong context can also pass.
+- **The text review is pattern matching, not understanding.** Unusual wording can get past it, such as "vibration doubled", "half a shift" or a deadline phrased in a way it has no pattern for. It can also reject honest wording, which costs a retry. The recommended action is only compared with the policy for normal results, where repair or replacement is refused. The fields a technician acts on (urgency, deadline, confidence) are set by code and don't depend on this review.
+- **Sample rate depends on the file or the person.** CWRU recordings are recognised by file number, so a wrong rate entered for one is refused. A renamed file, or any other upload, relies on the rate entered.
 - **A person should approve interventions.** This supports an engineer's decision and does not replace it.
+
+## License
+
+MIT. See [LICENSE](LICENSE). The datasets are not included and keep their own terms.
 
 ## Data sources
 

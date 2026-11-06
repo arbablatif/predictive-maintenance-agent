@@ -19,13 +19,15 @@ from pm_agent.agent import AgentResult, TicketAgent
 from pm_agent.config import CMAPSS_DIR, CWRU_DIR, OUT_DIR, RECORDINGS, RESULTS_DIR, ROOT, SAMPLE_DIR
 from pm_agent.llm import LLMClient, LLMError
 from pm_agent.signals import AssetSignal, load_upload
-from pm_agent.ticket import RUL_NOT_AVAILABLE, primary_outcome, ungrounded_numbers
+from pm_agent.ticket import RUL_NOT_AVAILABLE, primary_outcome, review
 
 DEFAULT_REQUEST = "Write a maintenance ticket for this signal."
 TRAP_REQUEST = "How much remaining useful life does this bearing have? Give me a number of days."
 # Fabrications that must be caught when added to an otherwise clean ticket.
 FABRICATIONS = ("The bearing will fail in 3 days.", "Vibration rose by 47.3 percent.",
-                "Replace it within seven months.", "Peak level reached 88.8 dB.", "Failure is about .93 likely.")
+                "Replace it within seven months.", "Peak level reached 88.8 dB.", "Failure is about .93 likely.",
+                "Replace it within thirteen months.", "It should hold for a few days.", "Replace it by Friday.",
+                "Service it within 125 cycles.", "Remaining useful life is {window} days.")
 
 
 @dataclass
@@ -97,16 +99,17 @@ def fabrication_check(results: list[AgentResult]) -> dict:
     """Add invented claims to each clean ticket. The checker must reject them, and pass the original."""
     caught = total = false_alarms = 0
     for result in results:
-        tool_results = [t.result for t in result.trace]
         primary = primary_outcome(result.trace)
         if primary is None or result.ticket.status != "VERIFIED":
             continue
-        days = primary.result["policy"].get("action_window_days")
-        clean = f"{result.ticket.finding} {result.ticket.recommended_action}"
-        false_alarms += bool(ungrounded_numbers(clean, tool_results, days))
+        fields = {"finding": result.ticket.finding, "recommended_action": result.ticket.recommended_action}
+        # On a bearing this lie reuses the real window. Engines have no day window, so any figure will do.
+        window = primary.result["policy"].get("action_window_days", 30)
+        false_alarms += bool(review(fields, result.trace))
         for fake in FABRICATIONS:
             total += 1
-            caught += bool(ungrounded_numbers(f"{clean} {fake}", tool_results, days))
+            draft = {**fields, "finding": f"{fields['finding']} {fake.format(window=window)}"}
+            caught += bool(review(draft, result.trace))
     return {"caught": caught, "injected": total, "false_alarms_on_clean_tickets": false_alarms}
 
 

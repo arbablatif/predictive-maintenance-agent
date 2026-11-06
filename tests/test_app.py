@@ -39,3 +39,23 @@ def test_upload_mode_waits_for_a_file():
     at.radio[0].set_value("Upload").run()
     assert not at.exception
     assert at.button[0].disabled
+
+
+def test_upload_rate_defaults_to_empty_so_a_known_rate_is_not_overridden():
+    at = start()
+    at.radio[0].set_value("Upload").run()
+    assert at.number_input[0].label == "Sample rate (Hz)" and at.number_input[0].value == 0.0
+
+
+def test_a_ticket_is_hidden_once_the_inputs_change():
+    at = start()
+    at.button[0].click().run()
+    assert any(s.value.startswith("Ticket PM-") for s in at.subheader)
+    at.text_input[0].set_value("Another asset").run()
+    assert not at.exception
+    assert not any(s.value.startswith("Ticket PM-") for s in at.subheader)
+
+
+def test_the_provider_box_follows_the_environment(monkeypatch):
+    monkeypatch.setenv("LLM_PROVIDER", "openai")
+    assert start().sidebar.selectbox[0].value == "openai"

@@ -15,7 +15,7 @@ import streamlit as st
 from pm_agent.agent import AgentResult, TicketAgent
 from pm_agent.bearing_physics import SKF_6205
 from pm_agent.config import CMAPSS_DIR, CWRU_DIR, FIGURE_DIR, RECORDINGS, RESULTS_DIR, SAMPLE_DIR
-from pm_agent.llm import LLMClient, LLMError
+from pm_agent.llm import DEFAULT_MODELS, LLMClient, LLMError, default_provider
 from pm_agent.signals import BEARINGS, AssetSignal, SignalError, asset_label, load_upload
 
 DEFAULT_REQUEST = "Write a maintenance ticket for this signal."
@@ -50,7 +50,8 @@ def choose_signal() -> AssetSignal | None:
     upload = st.file_uploader("Vibration (.mat, one-column .csv) or engine history (C-MAPSS .txt)",
                               type=["mat", "csv", "txt"])
     columns = st.columns(4)
-    fs = columns[0].number_input("Sample rate (Hz)", 0.0, value=12000.0, step=1000.0)
+    fs = columns[0].number_input("Sample rate (Hz)", 0.0, value=0.0, step=1000.0,
+                                 help="0 means use the known rate of a CWRU file. Required for anything else.")
     rpm = columns[1].number_input("Shaft speed (rpm)", 0.0, value=0.0, step=10.0, help="0 means read it from the file.")
     unit = columns[2].number_input("Engine number", 0, value=0, help="Only for a file holding several engines.")
     bearing = BEARINGS[columns[3].selectbox("Bearing", list(BEARINGS))]
@@ -98,15 +99,19 @@ def ticket_tab(mock: bool, provider: str) -> None:
         st.error(str(exc))
         signal = None
     request = st.text_input("Request", DEFAULT_REQUEST)
+    # A ticket is shown only for the exact inputs that produced it, so an old one can't pass for the new asset.
+    inputs = signal and (signal.signal_id, signal.asset, request, mock, provider)
     if st.button("Write ticket", type="primary", disabled=signal is None):
+        st.session_state.pop("result", None)
         try:
             with st.spinner("Running tools"):
                 llm = LLMClient(provider=provider, mock=mock)
-                st.session_state["result"] = TicketAgent(llm).run(signal, request)
+                st.session_state["result"] = inputs, TicketAgent(llm).run(signal, request)
         except LLMError as exc:
             st.error(str(exc))
-    if "result" in st.session_state:
-        show_ticket(st.session_state["result"])
+    saved_inputs, result = st.session_state.get("result", (None, None))
+    if result is not None and saved_inputs == inputs:
+        show_ticket(result)
 
 
 def results_tab() -> None:
@@ -144,7 +149,10 @@ def main() -> None:
     st.caption("Signal in, maintenance ticket out. Every number in a ticket is checked against tool results.")
     with st.sidebar:
         mock = st.toggle("Mock mode (no API calls)", value=True)
-        provider = st.selectbox("LLM provider", ("gemini", "anthropic", "openai"), disabled=mock)
+        providers = list(DEFAULT_MODELS)
+        configured = default_provider()
+        provider = st.selectbox("LLM provider", providers, disabled=mock,
+                                index=providers.index(configured) if configured in providers else 0)
         if not mock:
             st.warning("Live mode spends API credit. Replies are cached to disk.")
         st.caption(f"Default bearing: {SKF_6205.name}")
