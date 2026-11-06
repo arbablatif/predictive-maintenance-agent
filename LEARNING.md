@@ -1,6 +1,5 @@
 # Learning notes
 
-Plain-language explanations of the ideas and decisions in this project, so you can explain them to a client.
 
 ## The one-minute version
 
