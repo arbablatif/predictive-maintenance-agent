@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "{\"finding\": \"The vibration analysis indicates an inner race fault with high confidence. Remaining useful life is not available for this asset type.\", \"recommended_action\": \"Plan a bearing inspection within 7 days.\"}",
+  "tool_calls": []
+}

@@ -1,0 +1,15 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "",
+  "tool_calls": [
+    {
+      "id": "call_1",
+      "name": "estimate_rul",
+      "args": {
+        "signal_id": "005b6bcdde"
+      },
+      "signature": "EnMKcQFpFH0TQ5tTIB5vYc3fqBuILqIN6f2WZ/YjD5LK1XFZQD5i9jbxT93UrKpObuQJHWKSmF8DzradlX8LP+JZ/uU2rEaCSqF+7blYV8nwq1F0vJt116aKFQ+Nwn8fsDXKfOXP0YOR31KJGAdFi0lIZs0E"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "{\"finding\": \"The engine has 203 cycles observed and an estimated remaining useful life of 6 cycles. The 80 percent confidence interval for this estimate is between 4 and 7 cycles.\", \"recommended_action\": \"Plan engine maintenance within 4 cycles due to critical urgency.\"}",
+  "tool_calls": []
+}

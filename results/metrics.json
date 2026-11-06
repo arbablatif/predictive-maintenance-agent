@@ -1,0 +1,395 @@
+{
+  "part_a": {
+    "load_split": {
+      "folds": [
+        {
+          "held_out_load": 0,
+          "band_hz": [
+            3000,
+            5000
+          ],
+          "n_windows": 180,
+          "n_recordings": 10,
+          "window_accuracy": 0.9,
+          "window_macro_f1": 0.6935495367070563,
+          "recording_accuracy": 0.9,
+          "recording_macro_f1": 0.7142857142857143
+        },
+        {
+          "held_out_load": 1,
+          "band_hz": [
+            3000,
+            5000
+          ],
+          "n_windows": 190,
+          "n_recordings": 10,
+          "window_accuracy": 1.0,
+          "window_macro_f1": 1.0,
+          "recording_accuracy": 1.0,
+          "recording_macro_f1": 1.0
+        },
+        {
+          "held_out_load": 2,
+          "band_hz": [
+            3000,
+            5000
+          ],
+          "n_windows": 190,
+          "n_recordings": 10,
+          "window_accuracy": 1.0,
+          "window_macro_f1": 1.0,
+          "recording_accuracy": 1.0,
+          "recording_macro_f1": 1.0
+        },
+        {
+          "held_out_load": 3,
+          "band_hz": [
+            2000,
+            4000
+          ],
+          "n_windows": 190,
+          "n_recordings": 10,
+          "window_accuracy": 0.9473684210526315,
+          "window_macro_f1": 0.956197748868317,
+          "recording_accuracy": 1.0,
+          "recording_macro_f1": 1.0
+        }
+      ],
+      "pooled": {
+        "n_windows": 750,
+        "n_recordings": 40,
+        "window_accuracy": 0.9626666666666667,
+        "window_macro_f1": 0.9561513954787053,
+        "recording_accuracy": 0.975,
+        "recording_macro_f1": 0.9542857142857143
+      },
+      "confusion_recordings": [
+        [
+          3,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          12,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          12
+        ]
+      ],
+      "confusion_windows": [
+        [
+          57,
+          0,
+          9,
+          0
+        ],
+        [
+          0,
+          227,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          214,
+          14
+        ],
+        [
+          0,
+          0,
+          4,
+          224
+        ]
+      ],
+      "reliability": {
+        "high": {
+          "recordings": 23,
+          "correct": 23
+        },
+        "medium": {
+          "recordings": 16,
+          "correct": 15
+        },
+        "low": {
+          "recordings": 1,
+          "correct": 1
+        }
+      },
+      "ece_windows": 0.031315315833285035,
+      "misclassified": [
+        {
+          "recording": "normal_000_load0",
+          "label": "normal",
+          "pred": "outer_race",
+          "top_prob": 0.9946402763984056,
+          "envelope_check": "inconclusive",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "size_split": {
+      "folds": [
+        {
+          "held_out_size_in": 0.007,
+          "band_hz": [
+            3000,
+            5000
+          ],
+          "n_windows": 247,
+          "n_recordings": 13,
+          "window_accuracy": 0.9473684210526315,
+          "window_macro_f1": 0.9571592444263252,
+          "recording_accuracy": 1.0,
+          "recording_macro_f1": 1.0
+        },
+        {
+          "held_out_size_in": 0.014,
+          "band_hz": [
+            3000,
+            5000
+          ],
+          "n_windows": 247,
+          "n_recordings": 13,
+          "window_accuracy": 0.6477732793522267,
+          "window_macro_f1": 0.6394922698002908,
+          "recording_accuracy": 0.6153846153846154,
+          "recording_macro_f1": 0.6181318681318682
+        },
+        {
+          "held_out_size_in": 0.021,
+          "band_hz": [
+            1000,
+            3000
+          ],
+          "n_windows": 247,
+          "n_recordings": 13,
+          "window_accuracy": 0.9554655870445344,
+          "window_macro_f1": 0.9636252882565375,
+          "recording_accuracy": 1.0,
+          "recording_macro_f1": 1.0
+        }
+      ],
+      "pooled": {
+        "n_windows": 741,
+        "n_recordings": 39,
+        "window_accuracy": 0.8502024291497976,
+        "window_macro_f1": 0.8774580870599605,
+        "recording_accuracy": 0.8717948717948718,
+        "recording_macro_f1": 0.8960269865067466
+      },
+      "confusion_recordings": [
+        [
+          3,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          11,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          8,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          12
+        ]
+      ],
+      "reliability": {
+        "high": {
+          "recordings": 15,
+          "correct": 15
+        },
+        "medium": {
+          "recordings": 23,
+          "correct": 19
+        },
+        "low": {
+          "recordings": 1,
+          "correct": 0
+        }
+      },
+      "ece_windows": 0.13380418224291202
+    },
+    "random_split_leaky": {
+      "n_windows": 225,
+      "n_recordings": 40,
+      "window_accuracy": 0.9955555555555555,
+      "window_macro_f1": 0.996349586997069,
+      "recording_accuracy": 1.0,
+      "recording_macro_f1": 1.0
+    },
+    "ablation": {
+      "time only": {
+        "n_windows": 750,
+        "n_recordings": 40,
+        "window_accuracy": 0.9106666666666666,
+        "window_macro_f1": 0.9136802140402863,
+        "recording_accuracy": 0.925,
+        "recording_macro_f1": 0.9133520465042204
+      },
+      "envelope only": {
+        "n_windows": 750,
+        "n_recordings": 40,
+        "window_accuracy": 0.8013333333333333,
+        "window_macro_f1": 0.7061561671709716,
+        "recording_accuracy": 0.75,
+        "recording_macro_f1": 0.61
+      },
+      "time + envelope": {
+        "n_windows": 750,
+        "n_recordings": 40,
+        "window_accuracy": 0.9626666666666667,
+        "window_macro_f1": 0.9561513954787053,
+        "recording_accuracy": 0.975,
+        "recording_macro_f1": 0.9542857142857143
+      }
+    },
+    "shipped_model": {
+      "band_hz": [
+        2000,
+        4000
+      ],
+      "train_loads": [
+        0,
+        1,
+        2
+      ],
+      "test_load_3": {
+        "n_windows": 190,
+        "n_recordings": 10,
+        "window_accuracy": 0.9473684210526315,
+        "window_macro_f1": 0.956197748868317,
+        "recording_accuracy": 1.0,
+        "recording_macro_f1": 1.0
+      },
+      "reliability": {
+        "high": {
+          "recordings": 6,
+          "correct": 6
+        },
+        "medium": {
+          "recordings": 3,
+          "correct": 3
+        },
+        "low": {
+          "recordings": 1,
+          "correct": 1
+        }
+      }
+    },
+    "class_order": [
+      "normal",
+      "inner_race",
+      "outer_race",
+      "ball"
+    ]
+  },
+  "part_b": {
+    "models": {
+      "Fleet-life baseline (age only)": {
+        "rmse_true": 36.72216273227603,
+        "rmse_capped": 36.51434903891569,
+        "nasa_score": 7778.678799567423,
+        "late_fraction": 0.67
+      },
+      "Fleet-life baseline, capped at 125": {
+        "rmse_true": 32.96272641538869,
+        "rmse_capped": 32.22820787347263,
+        "nasa_score": 5420.702148264926,
+        "late_fraction": 0.64
+      },
+      "Ridge (sensors)": {
+        "rmse_true": 15.945552570495552,
+        "rmse_capped": 14.575327951320595,
+        "nasa_score": 404.33033521218647,
+        "late_fraction": 0.53
+      },
+      "Gradient boosting (sensors)": {
+        "rmse_true": 13.26758437489761,
+        "rmse_capped": 11.967836009463207,
+        "nasa_score": 244.60175697144902,
+        "late_fraction": 0.55
+      }
+    },
+    "group_cv_rmse_capped": {
+      "ridge": 16.166282858737418,
+      "gbm": 13.296760902986223
+    },
+    "gbm_rmse_true_ci95": [
+      11.193694439255678,
+      15.305549513655716
+    ],
+    "interval_coverage_capped": 0.79,
+    "interval_mean_width": 28.715657645654474,
+    "by_true_rul": [
+      {
+        "true_rul": "0-50",
+        "engines": 30,
+        "rmse": 4.872391896355704
+      },
+      {
+        "true_rul": "50-125",
+        "engines": 59,
+        "rmse": 14.261029745067251
+      },
+      {
+        "true_rul": "125-1000",
+        "engines": 11,
+        "rmse": 21.08733406306574
+      }
+    ],
+    "by_confidence": {
+      "high": {
+        "engines": 40,
+        "rmse": 10.514997581527448
+      },
+      "medium": {
+        "engines": 53,
+        "rmse": 12.92547693911964
+      },
+      "low": {
+        "engines": 7,
+        "rmse": 12.222352718701673
+      }
+    },
+    "sensors_used": [
+      "s2",
+      "s3",
+      "s4",
+      "s7",
+      "s8",
+      "s9",
+      "s11",
+      "s12",
+      "s13",
+      "s14",
+      "s15",
+      "s17",
+      "s20",
+      "s21"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# Raw datasets (fetched by scripts/download_data.py, never committed)
+data/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime output (regenerated)
+out/
+
+# Personal editor settings
+.vscode/

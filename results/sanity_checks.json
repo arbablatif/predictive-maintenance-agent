@@ -1,0 +1,60 @@
+{
+  "rul_leakage": {
+    "test_rows_identical_to_a_train_row": 0,
+    "group_cv_rmse_real_labels": 13.296760902986223,
+    "group_cv_rmse_shuffled_labels": 36.990264359529604
+  },
+  "rul_truncation": {
+    "cuts": 500,
+    "share_above_125": 0.246,
+    "official_test_share_above_125": 0.11,
+    "official_test_max_rul": 145.0,
+    "rmse_true": 31.77848528046262,
+    "rmse_capped": 13.638559357333744,
+    "by_true_rul": [
+      {
+        "true_rul": "0-50",
+        "cuts": 156,
+        "rmse": 8.293043455921929,
+        "mean_prediction": 28.456400288921184
+      },
+      {
+        "true_rul": "50-125",
+        "cuts": 221,
+        "rmse": 17.158760953856056,
+        "mean_prediction": 90.44934862516146
+      },
+      {
+        "true_rul": "125-145",
+        "cuts": 41,
+        "rmse": 22.78713671249706,
+        "mean_prediction": 114.92118724806218
+      },
+      {
+        "true_rul": "145-1000",
+        "cuts": 82,
+        "rmse": 70.52506324726451,
+        "mean_prediction": 117.00736258822899
+      }
+    ]
+  },
+  "false_alarm_file_97": {
+    "recording_rms": 0.07177397572790395,
+    "other_normal_rms_range": [
+      0.05688591169651029,
+      0.062447248577462956
+    ],
+    "votes_as_measured": {
+      "outer_race": 9
+    },
+    "votes_with_rms_set_to_typical_normal": {
+      "normal": 9
+    }
+  },
+  "size_split_by_fixed_band": {
+    "1000-3000 Hz": 0.8974358974358975,
+    "2000-4000 Hz": 0.7692307692307693,
+    "3000-5000 Hz": 0.7948717948717948,
+    "2000-5000 Hz": 0.8974358974358975
+  }
+}

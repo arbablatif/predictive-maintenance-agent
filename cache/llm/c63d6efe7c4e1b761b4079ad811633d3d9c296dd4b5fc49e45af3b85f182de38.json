@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "{\"finding\": \"The vibration analysis indicates an inner_race fault with low confidence. The shaft speed of 900 rpm is outside the training rig range of 1720 to 1800 rpm, and remaining useful life is not available for this asset type.\", \"recommended_action\": \"Perform an engineer review and remeasure within 30 days.\"}",
+  "tool_calls": []
+}

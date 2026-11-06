@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "{\"finding\": \"The vibration analysis for signal eec9f957b3 indicates the bearing is in normal condition with a high confidence level. Remaining useful life is not available for this asset type.\", \"recommended_action\": \"Continue routine monitoring with an action window of 90 days.\"}",
+  "tool_calls": []
+}

@@ -1,0 +1,6 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "{\"finding\": \"The vibration analysis indicates an outer race fault with high confidence. The envelope spectrum analysis supports this diagnosis, showing significant evidence at the BPFO frequency.\", \"recommended_action\": \"Plan a bearing inspection within 7 days as per the high urgency maintenance policy.\"}",
+  "tool_calls": []
+}

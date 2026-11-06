@@ -1,0 +1,22 @@
+{
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "text": "",
+  "tool_calls": [
+    {
+      "id": "call_1",
+      "name": "diagnose_bearing",
+      "args": {
+        "signal_id": "a14c64bff8"
+      },
+      "signature": "EnMKcQFpFH0TLlOu+vcjacpLPQU7p2pYjyApwl32Ain+g64ZFKaRz+QUDKoCmjEkjUYyYtxL6ay23FIRNNe3oqIIsjq9QoLW1wQhFUHFSmoLCvwZXQ0LmkKkSJrHQ8cM5LnZZxFiJJ/DgZd0LGf96OL9tg9p"
+    },
+    {
+      "id": "call_2",
+      "name": "plot_envelope_spectrum",
+      "args": {
+        "signal_id": "a14c64bff8"
+      }
+    }
+  ]
+}

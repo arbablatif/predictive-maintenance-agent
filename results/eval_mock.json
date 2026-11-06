@@ -1,0 +1,318 @@
+{
+  "mode": "mock",
+  "model": "mock",
+  "paid_calls": 0,
+  "rows": [
+    {
+      "case": "normal_000_load3 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "routine",
+      "confidence": "high",
+      "predicted": "normal",
+      "class_correct": true
+    },
+    {
+      "case": "inner_race_014_load3 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "high",
+      "confidence": "high",
+      "predicted": "inner_race",
+      "class_correct": true
+    },
+    {
+      "case": "outer_race_021_load3 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "high",
+      "confidence": "high",
+      "predicted": "outer_race",
+      "class_correct": true
+    },
+    {
+      "case": "ball_007_load3 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "medium",
+      "confidence": "medium",
+      "predicted": "ball",
+      "class_correct": true
+    },
+    {
+      "case": "ball_021_load3 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "medium",
+      "confidence": "medium",
+      "predicted": "ball",
+      "class_correct": true
+    },
+    {
+      "case": "NASA test engine 34 (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 2,
+      "plots_exist": true,
+      "urgency": "critical",
+      "confidence": "high",
+      "predicted": "RUL",
+      "class_correct": null
+    },
+    {
+      "case": "Trap: RUL asked of a bearing (real)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 4,
+      "plots_exist": true,
+      "urgency": "high",
+      "confidence": "high",
+      "predicted": "outer_race",
+      "class_correct": true,
+      "rul_refused": true
+    },
+    {
+      "case": "Out of range, 900 rpm (synthetic)",
+      "tools_ok": true,
+      "verified": true,
+      "retries": 0,
+      "turns": 3,
+      "plots_exist": true,
+      "urgency": "low",
+      "confidence": "low",
+      "predicted": "inner_race",
+      "class_correct": null,
+      "flagged": true
+    }
+  ],
+  "fabrication": {
+    "caught": 40,
+    "injected": 40,
+    "false_alarms_on_clean_tickets": 0
+  },
+  "tickets": [
+    {
+      "ticket_id": "PM-EEC9F957",
+      "asset": "Eval normal_000_load3",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "No bearing fault was detected, with class probability 0.999. The envelope check result is supports.",
+      "evidence": [
+        "Classifier: normal, mean probability 0.999, agreement across 19 windows 1.0.",
+        "Time domain: RMS 0.058 g, kurtosis 0.05, crest factor 4.2.",
+        "Envelope check against the classifier: supports (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 103.1 Hz: mean 6.3 dB above the floor.",
+        "BPFI at 155.7 Hz: mean 5.2 dB above the floor.",
+        "BSF at 67.8 Hz: mean 4.4 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/eec9f957b3/envelope_spectrum.png"
+      ],
+      "confidence": "high",
+      "recommended_action": "Follow continue routine monitoring within 90 days.",
+      "urgency": "routine",
+      "action_window": "90 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-40CA82C3",
+      "asset": "Eval inner_race_014_load3",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely inner race fault, with class probability 0.947. The envelope check result is supports.",
+      "evidence": [
+        "Classifier: inner_race, mean probability 0.947, agreement across 19 windows 0.947.",
+        "Time domain: RMS 0.181 g, kurtosis 15.17, crest factor 10.19.",
+        "Envelope check against the classifier: supports (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 103.2 Hz: mean 10.8 dB above the floor.",
+        "BPFI at 156.0 Hz: mean 18.0 dB above the floor.",
+        "BSF at 67.9 Hz: mean 10.4 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/40ca82c364/envelope_spectrum.png"
+      ],
+      "confidence": "high",
+      "recommended_action": "Follow plan bearing inspection within 7 days.",
+      "urgency": "high",
+      "action_window": "7 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-D095E51D",
+      "asset": "Eval outer_race_021_load3",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely outer race fault, with class probability 0.998. The envelope check result is supports.",
+      "evidence": [
+        "Classifier: outer_race, mean probability 0.998, agreement across 19 windows 1.0.",
+        "Time domain: RMS 0.555 g, kurtosis 19.52, crest factor 10.26.",
+        "Envelope check against the classifier: supports (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 102.8 Hz: mean 23.4 dB above the floor.",
+        "BPFI at 155.3 Hz: mean 10.2 dB above the floor.",
+        "BSF at 67.6 Hz: mean 12.6 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/d095e51d7b/envelope_spectrum.png"
+      ],
+      "confidence": "high",
+      "recommended_action": "Follow plan bearing inspection within 7 days.",
+      "urgency": "high",
+      "action_window": "7 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-A14C64BF",
+      "asset": "Eval ball_007_load3",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely ball fault, with class probability 0.997. The envelope check result is inconclusive.",
+      "evidence": [
+        "Classifier: ball, mean probability 0.997, agreement across 19 windows 1.0.",
+        "Time domain: RMS 0.154 g, kurtosis -0.11, crest factor 3.91.",
+        "Envelope check against the classifier: inconclusive (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 102.9 Hz: mean 8.7 dB above the floor.",
+        "BPFI at 155.4 Hz: mean 10.6 dB above the floor.",
+        "BSF at 67.6 Hz: mean 6.9 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/a14c64bff8/envelope_spectrum.png"
+      ],
+      "confidence": "medium",
+      "recommended_action": "Follow confirm with second measurement within 14 days.",
+      "urgency": "medium",
+      "action_window": "14 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-5CDA58D1",
+      "asset": "Eval ball_021_load3",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely ball fault, with class probability 0.999. The envelope check result is inconclusive.",
+      "evidence": [
+        "Classifier: ball, mean probability 0.999, agreement across 19 windows 1.0.",
+        "Time domain: RMS 0.118 g, kurtosis 0.11, crest factor 4.09.",
+        "Envelope check against the classifier: inconclusive (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 103.3 Hz: mean 9.2 dB above the floor.",
+        "BPFI at 156.0 Hz: mean 14.7 dB above the floor.",
+        "BSF at 67.9 Hz: mean 4.9 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/5cda58d1c4/envelope_spectrum.png"
+      ],
+      "confidence": "medium",
+      "recommended_action": "Follow confirm with second measurement within 14 days.",
+      "urgency": "medium",
+      "action_window": "14 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-005B6BCD",
+      "asset": "Eval NASA test engine 34",
+      "asset_type": "turbofan engine",
+      "finding": "Estimated remaining life is 6 cycles, with an interval of 4 to 7 cycles.",
+      "evidence": [
+        "203 cycles of sensor history analysed.",
+        "Point estimate 6 cycles, 80 % interval 4 to 7 cycles."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/005b6bcdde/sensor_trends.png"
+      ],
+      "confidence": "high",
+      "recommended_action": "Follow plan engine maintenance before 4 cycles have passed.",
+      "urgency": "critical",
+      "action_window": "4 cycles",
+      "remaining_useful_life": "6 cycles (80 % interval 4 to 7).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-D095E51D",
+      "asset": "Eval Trap: RUL asked of a bearing",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely outer race fault, with class probability 0.998. The envelope check result is supports. Remaining useful life is not available for this asset type.",
+      "evidence": [
+        "Classifier: outer_race, mean probability 0.998, agreement across 19 windows 1.0.",
+        "Time domain: RMS 0.555 g, kurtosis 19.52, crest factor 10.26.",
+        "Envelope check against the classifier: supports (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 102.8 Hz: mean 23.4 dB above the floor.",
+        "BPFI at 155.3 Hz: mean 10.2 dB above the floor.",
+        "BSF at 67.6 Hz: mean 12.6 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/d095e51d7b/envelope_spectrum.png"
+      ],
+      "confidence": "high",
+      "recommended_action": "Follow plan bearing inspection within 7 days.",
+      "urgency": "high",
+      "action_window": "7 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    },
+    {
+      "ticket_id": "PM-05498ABC",
+      "asset": "Eval Out of range, 900 rpm",
+      "asset_type": "bearing, SKF 6205-2RS JEM",
+      "finding": "Likely inner race fault, with class probability 0.998. The envelope check result is supports. Warning: Shaft speed 900 rpm is outside the training rig range 1720 to 1800 rpm.",
+      "evidence": [
+        "Classifier: inner_race, mean probability 0.998, agreement across 9 windows 1.0.",
+        "Time domain: RMS 0.306 g, kurtosis 18.88, crest factor 7.51.",
+        "Envelope check against the classifier: supports (a line counts as real at 10.0 dB above the floor).",
+        "BPFO at 53.8 Hz: mean 14.0 dB above the floor.",
+        "BPFI at 81.2 Hz: mean 34.2 dB above the floor.",
+        "BSF at 35.4 Hz: mean 2.7 dB above the floor."
+      ],
+      "evidence_plots": [
+        "out/eval_mock/05498abc25/envelope_spectrum.png"
+      ],
+      "confidence": "low",
+      "recommended_action": "Follow engineer review and remeasure within 30 days.",
+      "urgency": "low",
+      "action_window": "30 days",
+      "remaining_useful_life": "Not available for this asset type (bearing recordings have no run-to-failure history).",
+      "status": "VERIFIED",
+      "issues": [],
+      "warnings": [
+        "Shaft speed 900 rpm is outside the training rig range 1720 to 1800 rpm."
+      ],
+      "model_note": "Tool outputs are model estimates from public benchmark data. An engineer should confirm before any intervention."
+    }
+  ]
+}
